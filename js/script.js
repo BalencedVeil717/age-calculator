@@ -69,7 +69,7 @@ function updateCountdown() {
         elapsedMinutes,
         elapsedSecondsRemaining
       );
-    }, 10);
+    }, 1000);
   }
 
   setCountdownElements(years, months, days, hours, minutes, seconds);
