@@ -104,6 +104,26 @@ body {
   margin-left: 2%;
   text-align: center;
 }
+.calcbox .target {
+  min-width: 50%;
+  max-width: 70%;
+  height: 70px;
+  display: flex;
+  padding: 5px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0;
+}
+.calcbox .target input {
+  height: 50%;
+  width: 80%;
+  border-radius: 4px;
+  text-align: center;
+  border: 2px solid black;
+  box-shadow: 0 0 0 5px skyblue;
+  background-color: skyblue;
+}
 .declbox {
   width: 97%;
   background: #ee2424;

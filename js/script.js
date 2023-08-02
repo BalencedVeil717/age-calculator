@@ -1,7 +1,27 @@
 var targetDate = new Date("2021-01-01 01:00:00").getTime();
+var countdownInterval;
 
-var countdownInterval = setInterval(function () {
-  var now = new Date().getTime();
+function updateCountdown() {
+  function setCountdownElements(
+    elapsedYears,
+    elapsedMonths,
+    elapsedDays,
+    elapsedHours,
+    elapsedMinutes,
+    elapsedSecondsRemaining
+  ) {
+    document.getElementById("years").innerHTML = elapsedYears + "y ";
+    document.getElementById("months").innerHTML = elapsedMonths + "mo ";
+    document.getElementById("days").innerHTML = elapsedDays + "d ";
+    document.getElementById("hours").innerHTML = elapsedHours + "h ";
+    document.getElementById("minutes").innerHTML = elapsedMinutes + "m ";
+    document.getElementById("seconds").innerHTML =
+      elapsedSecondsRemaining + "s ";
+  }
+
+  var nowValue = document.getElementById("now").value;
+  var now = new Date(nowValue).getTime();
+
   var distance = targetDate - now;
 
   var years = Math.floor(distance / (1000 * 60 * 24 * 365));
@@ -25,7 +45,7 @@ var countdownInterval = setInterval(function () {
     clearInterval(countdownInterval);
 
     countdownInterval = setInterval(function () {
-      var now = new Date().getTime();
+      var now = new Date(nowValue).getTime();
       var elapsedSeconds = Math.floor((now - targetDate) / 1000);
 
       var elapsedYears = Math.floor(elapsedSeconds / (60 * 60 * 24 * 365));
@@ -41,27 +61,33 @@ var countdownInterval = setInterval(function () {
       var elapsedMinutes = Math.floor((elapsedSeconds % (60 * 60)) / 60);
       var elapsedSecondsRemaining = elapsedSeconds % 60;
 
-      document.getElementById("years").innerHTML = elapsedYears + "y ";
-      document.getElementById("months").innerHTML = elapsedMonths + "mo ";
-      document.getElementById("days").innerHTML = elapsedDays + "d ";
-      document.getElementById("hours").innerHTML = elapsedHours + "h ";
-      document.getElementById("minutes").innerHTML = elapsedMinutes + "m ";
-      document.getElementById("seconds").innerHTML =
-        elapsedSecondsRemaining + "s ";
-    }, 1000);
+      setCountdownElements(
+        elapsedYears,
+        elapsedMonths,
+        elapsedDays,
+        elapsedHours,
+        elapsedMinutes,
+        elapsedSecondsRemaining
+      );
+    }, 10);
   }
-}, 1000);
+
+  setCountdownElements(years, months, days, hours, minutes, seconds);
+}
 
 function setDateTime() {
-  const dateControl = document.querySelector('input[type="date"]');
-  const timeControl = document.querySelector('input[type="time"]');
-
   const dateValue = document.getElementById("date").value;
   const timeValue = document.getElementById("time").value;
+  const nowValue = document.getElementById("now").value;
 
   const dateTimeString = dateValue + "T" + timeValue;
-
   targetDate = new Date(dateTimeString).getTime();
+
+  clearInterval(countdownInterval);
+
+  updateCountdown();
+
+  countdownInterval = setInterval(updateCountdown, 1000);
 
   console.log(targetDate);
 }
@@ -69,4 +95,5 @@ function setDateTime() {
 setTimeout(function () {
   document.getElementById("loader").style.visibility = "hidden";
   document.getElementById("container").style.display = "flex";
-}, 3000);
+  updateCountdown();
+}, 1000);
