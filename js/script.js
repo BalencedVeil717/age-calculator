@@ -20,13 +20,14 @@ function updateCountdown() {
   }
 
   var nowValue = document.getElementById("now").value;
-  var now = new Date(nowValue).getTime();
+  var nowDate = new Date(nowValue + "T00:00:00"); // Consider only date without time
+  var now = nowDate.getTime() + nowDate.getTimezoneOffset() * 60000; // Account for time zone offset
 
-  var distance = targetDate - now;
+  var distance = Math.abs(targetDate - now); // Take the absolute value to ensure positive difference
 
-  var years = Math.floor(distance / (1000 * 60 * 24 * 365));
+  var years = Math.floor(distance / (1000 * 60 * 60 * 24 * 365));
   var months = Math.floor(
-    (distance % (1000 * 60 * 24 * 365)) / (1000 * 60 * 60 * 24 * 30)
+    (distance % (1000 * 60 * 60 * 24 * 365)) / (1000 * 60 * 60 * 24 * 30)
   );
   var days = Math.floor(
     (Math.abs(distance) % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24)
@@ -38,39 +39,6 @@ function updateCountdown() {
     (Math.abs(distance) % (1000 * 60 * 60)) / (1000 * 60)
   );
   var seconds = Math.floor((Math.abs(distance) % (1000 * 60)) / 1000);
-
-  var countdownFinished = distance <= 0;
-
-  if (countdownFinished) {
-    clearInterval(countdownInterval);
-
-    countdownInterval = setInterval(function () {
-      var now = new Date(nowValue).getTime();
-      var elapsedSeconds = Math.floor((now - targetDate) / 1000);
-
-      var elapsedYears = Math.floor(elapsedSeconds / (60 * 60 * 24 * 365));
-      var elapsedMonths = Math.floor(
-        (elapsedSeconds % (60 * 60 * 24 * 365)) / (60 * 60 * 24 * 30)
-      );
-      var elapsedDays = Math.floor(
-        (elapsedSeconds % (60 * 60 * 24 * 30)) / (60 * 60 * 24)
-      );
-      var elapsedHours = Math.floor(
-        (elapsedSeconds % (60 * 60 * 24)) / (60 * 60)
-      );
-      var elapsedMinutes = Math.floor((elapsedSeconds % (60 * 60)) / 60);
-      var elapsedSecondsRemaining = elapsedSeconds % 60;
-
-      setCountdownElements(
-        elapsedYears,
-        elapsedMonths,
-        elapsedDays,
-        elapsedHours,
-        elapsedMinutes,
-        elapsedSecondsRemaining
-      );
-    }, 1000);
-  }
 
   setCountdownElements(years, months, days, hours, minutes, seconds);
 }
@@ -84,16 +52,15 @@ function setDateTime() {
   targetDate = new Date(dateTimeString).getTime();
 
   clearInterval(countdownInterval);
-
   updateCountdown();
-
-  countdownInterval = setInterval(updateCountdown, 1000);
-
-  console.log(targetDate);
 }
 
-setTimeout(function () {
-  document.getElementById("loader").style.visibility = "hidden";
+document.getElementById("click").addEventListener("click", function () {
+  setDateTime();
+});
+
+// Show the container once the page is fully loaded
+window.onload = function () {
+  document.getElementById("loader").style.display = "none";
   document.getElementById("container").style.display = "flex";
-  updateCountdown();
-}, 1000);
+};
